@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  title: Tinder API
+  version: 1.0.0
+  description: Backend API for people interactions (Laravel 12)
+
+servers:
+  - url: http://127.0.0.1:8000
+
+paths:
+  /api/tinder:
+    get:
+      summary: List recommended people
+      description: Returns paginated list of people
+      tags:
+        - People
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Person'
+                  links:
+                    type: object
+                  meta:
+                    type: object
+
+  /api/tinder/interact:
+    post:
+      summary: Like or dislike a person
+      description: Create an interaction (like/dislike) for a person
+      tags:
+        - Interaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - person_id
+                - type
+              properties:
+                person_id:
+                  type: integer
+                  example: 1
+                type:
+                  type: string
+                  enum: [like, dislike]
+                  example: like
+      responses:
+        '200':
+          description: Interaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interaction'
+        '422':
+          description: Person already liked
+
+  /api/liked:
+    get:
+      summary: List of liked people
+      description: Returns paginated list of liked interactions with person details
+      tags:
+        - Interaction
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Interaction'
+                  links:
+                    type: object
+                  meta:
+                    type: object
+
+components:
+  schemas:
+    Person:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Ali
+        age:
+          type: integer
+          example: 28
+        location:
+          type: string
+          example: Bandung
+        pictures:
+          type: array
+          items:
+            type: string
+            example: https://example.com/images/ali1.jpg
+
+    Interaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+        type:
+          type: string
+          example: like
+        person:
+          $ref: '#/components/schemas/Person'
