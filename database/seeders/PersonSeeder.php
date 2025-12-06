@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Person;
+use Faker\Factory as Faker;
 
 class PersonSeeder extends Seeder
 {
@@ -13,54 +14,26 @@ class PersonSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
-            [
-                'name' => 'John Smith',
-                'age' => 30,
-                'pictures' => json_encode([
-                    'https://example.com/images/john1.jpg',
-                    'https://example.com/images/john2.jpg'
-                ]),
-                'location' => 'New York, USA'
-            ],
-            [
-                'name' => 'Emily Johnson',
-                'age' => 28,
-                'pictures' => json_encode([
-                    'https://example.com/images/emily1.jpg'
-                ]),
-                'location' => 'Los Angeles, USA'
-            ],
-            [
-                'name' => 'Michael Brown',
-                'age' => 26,
-                'pictures' => json_encode([
-                    'https://example.com/images/michael1.jpg',
-                    'https://example.com/images/michael2.jpg'
-                ]),
-                'location' => 'Chicago, USA'
-            ],
-            [
-                'name' => 'Sarah Davis',
-                'age' => 32,
-                'pictures' => json_encode([
-                    'https://example.com/images/sarah1.jpg'
-                ]),
-                'location' => 'Houston, USA'
-            ],
-            [
-                'name' => 'David Wilson',
-                'age' => 29,
-                'pictures' => json_encode([
-                    'https://example.com/images/david1.jpg',
-                    'https://example.com/images/david2.jpg'
-                ]),
-                'location' => 'Miami, USA'
-            ],
+        $faker = Faker::create();
+
+        // List of US cities for location
+        $cities = [
+            'New York, USA', 'Los Angeles, USA', 'Chicago, USA', 'Houston, USA',
+            'Miami, USA', 'San Francisco, USA', 'Seattle, USA', 'Boston, USA',
+            'Dallas, USA', 'Denver, USA', 'Atlanta, USA', 'Phoenix, USA',
+            'Philadelphia, USA', 'San Diego, USA', 'Las Vegas, USA'
         ];
 
-        foreach ($data as $person) {
-            Person::create($person);
+        for ($i = 0; $i < 100; $i++) {
+            Person::create([
+                'name' => $faker->name,
+                'age' => $faker->numberBetween(20, 40),
+                'pictures' => json_encode([
+                    "https://example.com/images/person{$i}_1.jpg",
+                    "https://example.com/images/person{$i}_2.jpg"
+                ]),
+                'location' => $faker->randomElement($cities),
+            ]);
         }
     }
 }
