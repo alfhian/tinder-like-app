@@ -1,59 +1,154 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tinder-like API (Laravel 12)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A simple Tinder-like backend API built with Laravel 12.  
+Features include listing people, liking/disliking interactions, and viewing liked people.  
+Swagger/OpenAPI is integrated for interactive API documentation.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Features
+- List recommended people with pagination (`/api/tinder`)
+- Like or dislike a person (`/api/tinder/interact`)
+- View liked people (`/api/liked`)
+- Popularity alert via email when a person exceeds 50 likes
+- Swagger UI documentation (`/api/documentation`)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Requirements
+- PHP >= 8.2
+- Composer
+- Laravel 12
+- MySQL/MariaDB
+- Node.js & npm (optional, for frontend integration)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## ⚙️ Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Clone repository:
+   ```bash
+   git clone https://github.com/yourusername/php_tinder_app.git
+   cd php_tinder_app
+   ```
 
-## Laravel Sponsors
+2. Install dependencies:
+   ```bash
+   composer install
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. Copy `.env` file and configure database:
+   ```bash
+   cp .env.example .env
+   ```
 
-### Premium Partners
+   Set the following in `.env`:
+   ```
+   DB_DATABASE=php_tinder_app
+   DB_USERNAME=root
+   DB_PASSWORD=your_password
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+4. Run migrations and seeders:
+   ```bash
+   php artisan migrate --seed
+   ```
 
-## Contributing
+5. Start local server:
+   ```bash
+   php artisan serve
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🗄️ Database Details
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**Database name:** `php_tinder_app`
 
-## Security Vulnerabilities
+### Tables
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### `people`
+| Column     | Type      | Description                        |
+|------------|-----------|------------------------------------|
+| id         | INT (PK)  | Auto-increment primary key         |
+| name       | VARCHAR   | Person's name                      |
+| age        | INT       | Person's age                       |
+| pictures   | JSON      | Array of picture URLs              |
+| location   | VARCHAR   | Person's location (city, country)  |
+| created_at | TIMESTAMP | Record creation time               |
+| updated_at | TIMESTAMP | Record update time                 |
 
-## License
+#### `interactions`
+| Column     | Type      | Description                        |
+|------------|-----------|------------------------------------|
+| id         | INT (PK)  | Auto-increment primary key         |
+| person_id  | INT (FK)  | References `people.id`             |
+| type       | ENUM      | Interaction type (`like`, `dislike`) |
+| created_at | TIMESTAMP | Record creation time               |
+| updated_at | TIMESTAMP | Record update time                 |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📚 API Documentation
+
+Swagger UI is available at:
+```
+http://127.0.0.1:8000/api/documentation
+```
+
+OpenAPI spec file is located at:
+```
+docs/openapi.yaml
+```
+
+---
+
+## 🧪 Example Seeder
+
+Seeder file: `database/seeders/PersonSeeder.php`
+
+```php
+$data = [
+    [
+        'name' => 'John Smith',
+        'age' => 30,
+        'pictures' => json_encode([
+            'https://example.com/images/john1.jpg',
+            'https://example.com/images/john2.jpg'
+        ]),
+        'location' => 'New York, USA'
+    ],
+    [
+        'name' => 'Emily Johnson',
+        'age' => 28,
+        'pictures' => json_encode([
+            'https://example.com/images/emily1.jpg'
+        ]),
+        'location' => 'Los Angeles, USA'
+    ],
+    [
+        'name' => 'Michael Brown',
+        'age' => 26,
+        'pictures' => json_encode([
+            'https://example.com/images/michael1.jpg',
+            'https://example.com/images/michael2.jpg'
+        ]),
+        'location' => 'Chicago, USA'
+    ],
+];
+```
+
+---
+
+## 📧 Popularity Alert
+
+When a person receives more than 50 likes, an email notification is sent to:
+```
+admin@tinder.com
+```
+
+---
+
+## 📝 License
+This project is licensed under the MIT License.
+```
